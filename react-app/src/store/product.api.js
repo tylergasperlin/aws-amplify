@@ -7,11 +7,8 @@ import { Products } from '../models/index';
 const captains = console;
 
 export const deleteProductApi = async (product) => {
-  const response = await axios.delete(`${API}/products/${product.id}`);
-
   const modelToDelete = await DataStore.query(Products, product.id);
   DataStore.delete(modelToDelete);
-  return parseItem(response, 200);
 };
 
 export const updateProductApi = async (product) => {
@@ -23,19 +20,15 @@ export const updateProductApi = async (product) => {
   //return parseItem(response, 200);
   const response = await axios.put(`${API}/products/${product.id}`, product);
   return parseItem(response, 200);
-
 };
 
 export const addProductApi = async (product) => {
-
   const productToSave = new Products({
-    'name': product.name,
-    'description': product.description,
-    'quantity': parseInt(product.quantity)
-  })
-  const result = await DataStore.save(
-    productToSave
-  );
+    name: product.name,
+    description: product.description,
+    quantity: parseInt(product.quantity),
+  });
+  const result = await DataStore.save(productToSave);
 
   return parseItem(result, 201);
 };
