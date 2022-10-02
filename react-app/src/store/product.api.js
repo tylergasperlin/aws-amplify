@@ -27,23 +27,21 @@ export const updateProductApi = async (product) => {
 };
 
 export const addProductApi = async (product) => {
-  //const response = await axios.post(`${API}/products`, product);
-  await DataStore.save(
-      new Products({
-      'name': 'Lorem ipsum dolor sit amet',
-      'description': 'Lorem ipsum dolor sit amet',
-      'quantity': 1020
-    })
+
+  const productToSave = new Products({
+    'name': product.name,
+    'description': product.description,
+    'quantity': parseInt(product.quantity)
+  })
+  const result = await DataStore.save(
+    productToSave
   );
-  const response = await axios.post(`${API}/products`, product);
-  return parseItem(response, 201);
- // return parseItem(response, 201);
+
+  return parseItem(result, 201);
 };
 
 export const loadProductsApi = async () => {
   const response = await DataStore.query(Products);
-  console.log(response)
-  //const response = await axios.get(`${API}/products`);
 
   return parseList(response, 200);
 };
