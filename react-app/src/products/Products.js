@@ -44,7 +44,6 @@ function Products({ history }) {
 
   function handleSaveProduct(product) {
     if (selectedProduct && selectedProduct.name) {
-      captains.log(product);
       updateProduct(product);
     } else {
       addProduct(product);

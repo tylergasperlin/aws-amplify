@@ -1,10 +1,6 @@
-import axios from 'axios';
 import { parseItem, parseList } from './action-utils';
-import API from './config';
 import { DataStore } from '@aws-amplify/datastore';
 import { Products } from '../models/index';
-
-const captains = console;
 
 export const deleteProductApi = async (product) => {
   const modelToDelete = await DataStore.query(Products, product.id);
@@ -12,14 +8,23 @@ export const deleteProductApi = async (product) => {
 };
 
 export const updateProductApi = async (product) => {
-  captains.log(product.id);
-  //const response = await axios.put(`${API}/products/${product.id}`, product);
-  /* Models in DataStore are immutable. To update a record you must use the copyOf function
+  const modelToUpdate = await DataStore.query(Products, product.id);
+
+  try {
+    /* Models in DataStore are immutable. To update a record you must use the copyOf function
   to apply updates to the item’s fields rather than mutating the instance directly */
-  await DataStore.save(product);
-  //return parseItem(response, 200);
-  const response = await axios.put(`${API}/products/${product.id}`, product);
-  return parseItem(response, 200);
+    const result = await DataStore.save(
+      Products.copyOf(modelToUpdate, (copiedModelToUpdate) => {
+        copiedModelToUpdate.name = product.name;
+        copiedModelToUpdate.description = product.description;
+        copiedModelToUpdate.quantity = product.quantity;
+      }),
+    );
+    return parseItem(result, 200);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+  }
 };
 
 export const addProductApi = async (product) => {
