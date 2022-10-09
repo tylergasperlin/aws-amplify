@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Auth } from 'aws-amplify';
 
 const NavBar = (props) => {
   const providers = ['twitter', 'github', 'aad'];
   const redirect = window.location.pathname;
   const [userInfo, setUserInfo] = useState();
 
-  useEffect(() => {
+  const signIn = async () => {
+    try {
+      const user = await Auth.federatedSignIn({'provider': 'Google'});
+      console.log(user)
+    } catch (error) {
+      console.log('error signing in', error);
+    }
+  };
+
+  useEffect(async() => {
     (async () => {
       setUserInfo(await getUserInfo());
     })();
+    await signIn();
   }, []);
 
   async function getUserInfo() {
